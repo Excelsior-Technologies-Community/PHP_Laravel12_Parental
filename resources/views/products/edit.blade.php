@@ -1,62 +1,96 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<title>Edit Product</title>
+    <title>Edit Product</title>
 
-<style>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+        }
 
-body {
-    font-family: Arial;
-    background: #f4f4f4;
-}
+        .container {
+            width: 420px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
 
-.container {
-    width: 400px;
-    margin: 50px auto;
-    background: white;
-    padding: 20px;
-}
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
+        button {
+            background: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            margin-top: 15px;
+            cursor: pointer;
+        }
 
-button {
-    background: blue;
-    color: white;
-    padding: 10px;
-    border: none;
-    width: 100%;
-}
-
-</style>
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<h2>Edit Product</h2>
+        <h2>Edit Product</h2>
 
-<form action="{{ route('products.update', $product->id) }}" method="POST">
+        <form action="{{ route('products.update', $product->id) }}" method="POST">
 
-@csrf
+            @csrf
 
-<input type="text" name="name" value="{{ $product->name }}" required>
+            <!-- Name -->
+            <label>Product Name</label>
+            <input type="text" name="name" value="{{ $product->name }}" required>
 
-<input type="number" name="price" value="{{ $product->price }}" required>
+            <!-- Price -->
+            <label>Price</label>
+            <input type="number" name="price" value="{{ $product->price }}" required>
 
-<br><br>
+            <!-- Type -->
+            <label>Product Type</label>
+            <select name="type">
+                <option value="physical" {{ $product->type == 'physical' ? 'selected' : '' }}>
+                    Physical Product
+                </option>
+                <option value="digital" {{ $product->type == 'digital' ? 'selected' : '' }}>
+                    Digital Product
+                </option>
+            </select>
 
-<button type="submit">Update</button>
+            <!-- Status -->
+            <label>Status</label>
+            <select name="status">
+                <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>
+                    Active
+                </option>
+                <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>
+                    Inactive
+                </option>
+            </select>
 
-</form>
+            <button type="submit">Update Product</button>
 
-</div>
+        </form>
+
+    </div>
 
 </body>
+
 </html>

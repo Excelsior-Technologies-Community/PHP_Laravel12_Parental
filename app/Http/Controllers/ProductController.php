@@ -10,10 +10,18 @@ use App\Models\DigitalProduct;
 class ProductController extends Controller
 {
 
-    // Show all products
-    public function index()
+    // Show all products (WITH SEARCH)
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $query = Product::query();
+
+        // Search functionality
+        if ($request->search) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('type', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->orderby('id', 'asc')->get();
 
         return view('products.index', compact('products'));
     }
@@ -26,7 +34,7 @@ class ProductController extends Controller
     }
 
 
-    // Store product
+    // Store product (WITH STATUS SUPPORT)
     public function store(Request $request)
     {
 
@@ -34,22 +42,24 @@ class ProductController extends Controller
             PhysicalProduct::create([
                 'name' => $request->name,
                 'price' => $request->price,
+                'status' => $request->status ?? 'active',
             ]);
         } else {
             DigitalProduct::create([
                 'name' => $request->name,
                 'price' => $request->price,
+                'status' => $request->status ?? 'active',
             ]);
         }
 
         return redirect()->route('products.index');
-
     }
+
 
     // Show single product
     public function show($id)
     {
-        $product = Product::find($id);
+        $product = Product::findOrFail($id);
 
         return view('products.show', compact('product'));
     }
@@ -58,7 +68,7 @@ class ProductController extends Controller
     // Edit form
     public function edit($id)
     {
-        $product = Product::find($id);
+        $product = Product::findOrFail($id);
 
         return view('products.edit', compact('product'));
     }
@@ -67,10 +77,11 @@ class ProductController extends Controller
     // Update product
     public function update(Request $request, $id)
     {
-        $product = Product::find($id);
+        $product = Product::findOrFail($id);
 
         $product->name = $request->name;
         $product->price = $request->price;
+        $product->status = $request->status ?? $product->status;
 
         $product->save();
 
@@ -81,7 +92,7 @@ class ProductController extends Controller
     // Delete product
     public function delete($id)
     {
-        Product::find($id)->delete();
+        Product::findOrFail($id)->delete();
 
         return redirect()->route('products.index');
     }

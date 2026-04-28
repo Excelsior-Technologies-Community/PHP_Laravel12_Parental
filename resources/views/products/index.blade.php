@@ -1,116 +1,164 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<title>Product List</title>
+    <title>Product List</title>
 
-<style>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+        }
 
-body {
-    font-family: Arial;
-    background: #f4f4f4;
-}
+        .container {
+            width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+        }
 
-.container {
-    width: 700px;
-    margin: 50px auto;
-    background: white;
-    padding: 20px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
 
-table, th, td {
-    border: 1px solid black;
-}
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
 
-th, td {
-    padding: 10px;
-    text-align: center;
-}
+        .btn {
+            padding: 5px 10px;
+            color: white;
+            text-decoration: none;
+            margin: 2px;
+            display: inline-block;
+        }
 
-.btn {
-    padding: 5px 10px;
-    color: white;
-    text-decoration: none;
-    margin: 2px;
-}
+        .add {
+            background: green;
+        }
 
-.add {
-    background: green;
-}
+        .edit {
+            background: blue;
+        }
 
-.edit {
-    background: blue;
-}
+        .delete {
+            background: red;
+        }
 
-.delete {
-    background: red;
-}
+        /* search box */
+        .search-box {
+            margin-bottom: 15px;
+        }
 
-</style>
+        .search-box input {
+            padding: 8px;
+            width: 60%;
+        }
+
+        .search-box button {
+            padding: 8px 12px;
+            background: black;
+            color: white;
+            border: none;
+        }
+
+        .status-active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-inactive {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<h2>Product List</h2>
+        <h2>Product List</h2>
 
-<a href="{{ route('products.create') }}" class="btn add">Add Product</a>
+        <!-- search box -->
+        <form method="GET" class="search-box">
+            <input type="text" name="search" placeholder="Search product name or type...">
+            <button type="submit">Search</button>
+        </form>
 
-<br><br>
+        <a href="{{ route('products.create') }}" class="btn add">Add Product</a>
 
-<table>
+        <br><br>
 
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>Price</th>
-<th>Type</th>
-<th>Action</th>
-</tr>
+        <table>
 
-@foreach($products as $product)
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
 
-<tr>
+            @foreach($products as $product)
 
-<td>{{ $product->id }}</td>
+            <tr>
 
-<td>{{ $product->name }}</td>
+                <td>{{ $product->id }}</td>
 
-<td>{{ $product->price }}</td>
+                <td>{{ $product->name }}</td>
 
-<td>{{ class_basename($product) }}</td>
+                <td>{{ $product->price }}</td>
 
-<td>
+                <!-- better type display -->
+                <td>
+                    {{ $product->type ?? class_basename($product) }}
+                </td>
 
-<a href="{{ route('products.show', $product->id) }}" class="btn add">
-Show
-</a>
+                <!-- status column -->
+                <td>
+                    <span class="{{ $product->status == 'active' ? 'status-active' : 'status-inactive' }}">
+                        {{ ucfirst($product->status) }}
+                    </span>
+                </td>
 
-<a href="{{ route('products.edit', $product->id) }}" class="btn edit">
-Edit
-</a>
+                <td>
 
-<a href="{{ route('products.delete', $product->id) }}" class="btn delete" onclick="return confirm('Are You Sure Delete This?')">
-Delete
-</a>
+                    <a href="{{ route('products.show', $product->id) }}" class="btn add">
+                        Show
+                    </a>
 
-</td>
+                    <a href="{{ route('products.edit', $product->id) }}" class="btn edit">
+                        Edit
+                    </a>
 
+                    <a href="{{ route('products.delete', $product->id) }}" class="btn delete"
+                        onclick="return confirm('Are You Sure Delete This?')">
+                        Delete
+                    </a>
 
-</tr>
+                </td>
 
-@endforeach
+            </tr>
 
-</table>
+            @endforeach
 
-</div>
+        </table>
+
+    </div>
 
 </body>
+
 </html>

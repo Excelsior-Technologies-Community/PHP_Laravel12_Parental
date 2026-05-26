@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
     <title>Show Product</title>
-
     <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --container-bg: white;
+            --text-color: black;
+            --link-color: blue;
+        }
+
+        body.dark {
+            --bg-color: #222;
+            --container-bg: #333;
+            --text-color: #eee;
+            --link-color: #66b3ff;
+        }
+
         body {
             font-family: Arial;
-            background: #f4f4f4;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: 0.3s;
         }
 
         .container {
             width: 500px;
             margin: 50px auto;
-            background: white;
+            background: var(--container-bg);
             padding: 20px;
             border-radius: 5px;
         }
@@ -31,25 +44,46 @@
             background: green;
             display: inline-block;
             margin-top: 10px;
+            border-radius: 4px;
         }
 
-        /* status styles */
         .status-active {
-            color: green;
+            color: #28a745;
             font-weight: bold;
         }
 
         .status-inactive {
-            color: red;
+            color: #dc3545;
             font-weight: bold;
         }
+
+        a {
+            color: var(--link-color);
+        }
+
+        .theme-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            float: right;
+            border-radius: 4px;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
     </style>
-
 </head>
-
 <body>
 
     <div class="container">
+        <div class="clearfix">
+            <button type="button" class="theme-btn" onclick="toggleTheme()">🌙 / ☀️</button>
+        </div>
 
         <h2>Product Details</h2>
 
@@ -65,12 +99,27 @@
             <strong>Price:</strong> {{ $product->price }}
         </div>
 
-        <!-- FIXED TYPE DISPLAY -->
         <div class="row">
-            <strong>Type:</strong> {{ $product->type }}
+            <strong>Type:</strong> {{ $product->type ?? class_basename($product) }}
         </div>
 
-        <!-- NEW STATUS FIELD -->
+        @if($product->type == 'physical')
+            <div class="row">
+                <strong>Weight:</strong> {{ $product->weight }} kg
+            </div>
+            <div class="row">
+                <strong>Shipping Cost:</strong> ₹{{ $product->shipping_cost }}
+            </div>
+        @elseif($product->type == 'digital')
+            <div class="row">
+                <strong>Download Link:</strong> 
+                <a href="{{ $product->download_link }}" target="_blank">{{ $product->download_link }}</a>
+            </div>
+            <div class="row">
+                <strong>File Size:</strong> {{ $product->file_size }} MB
+            </div>
+        @endif
+
         <div class="row">
             <strong>Status:</strong>
             <span class="{{ $product->status == 'active' ? 'status-active' : 'status-inactive' }}">
@@ -81,9 +130,13 @@
         <br>
 
         <a href="{{ route('products.index') }}" class="btn">Back</a>
-
     </div>
 
-</body>
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+        }
+    </script>
 
+</body>
 </html>

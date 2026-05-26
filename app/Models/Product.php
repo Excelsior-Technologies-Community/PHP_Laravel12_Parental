@@ -11,16 +11,18 @@ class Product extends Model
 {
     use HasChildren;
 
-    protected $fillable =
-    [
+    protected $fillable = [
         'name',
         'price',
         'type',
-        'status', // IMPORTANT ADDED
+        'status',
+        'weight',
+        'shipping_cost',
+        'download_link',
+        'file_size'
     ];
 
-    protected $childTypes =
-    [
+    protected $childTypes = [
         'physical' => PhysicalProduct::class,
         'digital' => DigitalProduct::class,
     ];

@@ -9,13 +9,10 @@ use App\Models\DigitalProduct;
 
 class ProductController extends Controller
 {
-
-    // Show all products (WITH SEARCH)
     public function index(Request $request)
     {
         $query = Product::query();
 
-        // Search functionality
         if ($request->search) {
             $query->where('name', 'like', '%' . $request->search . '%')
                   ->orWhere('type', 'like', '%' . $request->search . '%');
@@ -26,37 +23,34 @@ class ProductController extends Controller
         return view('products.index', compact('products'));
     }
 
-
-    // Show create form
     public function create()
     {
         return view('products.create');
     }
 
-
-    // Store product (WITH STATUS SUPPORT)
     public function store(Request $request)
     {
-
         if ($request->type == 'physical') {
             PhysicalProduct::create([
                 'name' => $request->name,
                 'price' => $request->price,
                 'status' => $request->status ?? 'active',
+                'weight' => $request->weight,
+                'shipping_cost' => $request->shipping_cost,
             ]);
         } else {
             DigitalProduct::create([
                 'name' => $request->name,
                 'price' => $request->price,
                 'status' => $request->status ?? 'active',
+                'download_link' => $request->download_link,
+                'file_size' => $request->file_size,
             ]);
         }
 
         return redirect()->route('products.index');
     }
 
-
-    // Show single product
     public function show($id)
     {
         $product = Product::findOrFail($id);
@@ -64,8 +58,6 @@ class ProductController extends Controller
         return view('products.show', compact('product'));
     }
 
-
-    // Edit form
     public function edit($id)
     {
         $product = Product::findOrFail($id);
@@ -73,8 +65,6 @@ class ProductController extends Controller
         return view('products.edit', compact('product'));
     }
 
-
-    // Update product
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
@@ -83,18 +73,27 @@ class ProductController extends Controller
         $product->price = $request->price;
         $product->status = $request->status ?? $product->status;
 
+        if ($request->type == 'physical') {
+            $product->weight = $request->weight;
+            $product->shipping_cost = $request->shipping_cost;
+            $product->download_link = null;
+            $product->file_size = null;
+        } else {
+            $product->download_link = $request->download_link;
+            $product->file_size = $request->file_size;
+            $product->weight = null;
+            $product->shipping_cost = null;
+        }
+
         $product->save();
 
         return redirect()->route('products.index');
     }
 
-
-    // Delete product
     public function delete($id)
     {
         Product::findOrFail($id)->delete();
 
         return redirect()->route('products.index');
     }
-
 }

@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\PhysicalProduct;
-use App\Models\DigitalProduct;
 use Parental\HasChildren;
 
 class Product extends Model
@@ -15,11 +13,7 @@ class Product extends Model
         'name',
         'price',
         'type',
-        'status',
-        'weight',
-        'shipping_cost',
-        'download_link',
-        'file_size'
+        'status'
     ];
 
     protected $childTypes = [

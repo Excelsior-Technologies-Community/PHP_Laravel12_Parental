@@ -3,163 +3,126 @@
 <head>
     <title>Edit Product</title>
     <style>
-        :root {
-            --bg-color: #f4f4f4;
-            --container-bg: white;
-            --text-color: black;
-            --input-border: #ccc;
-            --input-bg: white;
-        }
-
-        body.dark {
-            --bg-color: #222;
-            --container-bg: #333;
-            --text-color: #eee;
-            --input-border: #555;
-            --input-bg: #444;
-        }
-
         body {
-            font-family: Arial;
-            background: var(--bg-color);
-            color: var(--text-color);
-            transition: 0.3s;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
         }
 
         .container {
-            width: 420px;
+            max-width: 500px;
             margin: 50px auto;
-            background: var(--container-bg);
-            padding: 20px;
+            background: white;
+            padding: 25px;
             border-radius: 5px;
+            border: 1px solid #ddd;
         }
 
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            box-sizing: border-box;
-            border: 1px solid var(--input-border);
-            background: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 4px;
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
         }
 
-        button {
-            background: blue;
-            color: white;
-            padding: 10px;
-            border: none;
-            width: 100%;
-            margin-top: 15px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .theme-btn {
-            background: #007bff;
-            width: auto;
-            float: right;
-            margin-top: 0;
-            padding: 8px 12px;
+        .form-group {
+            margin-bottom: 15px;
         }
 
         label {
-            margin-top: 10px;
             display: block;
+            margin-bottom: 5px;
             font-weight: bold;
+            color: #555;
+            font-size: 13px;
         }
 
-        .hidden {
-            display: none;
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
         }
 
-        .dynamic-fields {
-            background: rgba(128, 128, 128, 0.1);
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 5px;
+        button {
+            background: #ff9800;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
         }
 
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
+        button:hover {
+            background: #f57c00;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 10px;
+            text-align: center;
+            background: #999;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-back:hover {
+            background: #777;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div class="clearfix">
-            <button type="button" class="theme-btn" onclick="toggleTheme()">🌙 / ☀️</button>
-        </div>
-
         <h2>Edit Product</h2>
 
         <form action="{{ route('products.update', $product->id) }}" method="POST">
             @csrf
 
-            <label>Product Name</label>
-            <input type="text" name="name" value="{{ $product->name }}" required>
-
-            <label>Price</label>
-            <input type="number" name="price" value="{{ $product->price }}" required>
-
-            <label>Product Type</label>
-            <select name="type" id="productType" required onchange="toggleFields()">
-                <option value="physical" {{ $product->type == 'physical' ? 'selected' : '' }}>Physical Product</option>
-                <option value="digital" {{ $product->type == 'digital' ? 'selected' : '' }}>Digital Product</option>
-            </select>
-
-            <div id="physicalFields" class="dynamic-fields hidden">
-                <label>Weight (kg)</label>
-                <input type="text" name="weight" value="{{ $product->weight }}">
-
-                <label>Shipping Cost</label>
-                <input type="number" name="shipping_cost" value="{{ $product->shipping_cost }}">
+            <div class="form-group">
+                <label>Product Name *</label>
+                <input type="text" name="name" value="{{ old('name', $product->name) }}" required>
+                @error('name')
+                    <div class="error">{{ $message }}</div>
+                @enderror
             </div>
 
-            <div id="digitalFields" class="dynamic-fields hidden">
-                <label>Download Link</label>
-                <input type="url" name="download_link" value="{{ $product->download_link }}">
-
-                <label>File Size (MB)</label>
-                <input type="text" name="file_size" value="{{ $product->file_size }}">
+            <div class="form-group">
+                <label>Price *</label>
+                <input type="number" name="price" value="{{ old('price', $product->price) }}" step="0.01" required>
+                @error('price')
+                    <div class="error">{{ $message }}</div>
+                @enderror
             </div>
 
-            <label>Status</label>
-            <select name="status">
-                <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>Active</option>
-                <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
-            </select>
+            <div class="form-group">
+                <label>Status *</label>
+                <select name="status" required>
+                    <option value="active" {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ old('status', $product->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                </select>
+                @error('status')
+                    <div class="error">{{ $message }}</div>
+                @enderror
+            </div>
 
             <button type="submit">Update Product</button>
         </form>
+
+        <a href="{{ route('products.index') }}" class="btn-back">Back to List</a>
     </div>
-
-    <script>
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-        }
-
-        function toggleFields() {
-            let type = document.getElementById('productType').value;
-            let physical = document.getElementById('physicalFields');
-            let digital = document.getElementById('digitalFields');
-
-            physical.classList.add('hidden');
-            digital.classList.add('hidden');
-
-            if (type === 'physical') {
-                physical.classList.remove('hidden');
-            } else if (type === 'digital') {
-                digital.classList.remove('hidden');
-            }
-        }
-
-        window.onload = toggleFields;
-    </script>
 </body>
 </html>

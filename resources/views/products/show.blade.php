@@ -1,142 +1,150 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Show Product</title>
+    <title>Product Details</title>
     <style>
-        :root {
-            --bg-color: #f4f4f4;
-            --container-bg: white;
-            --text-color: black;
-            --link-color: blue;
-        }
-
-        body.dark {
-            --bg-color: #222;
-            --container-bg: #333;
-            --text-color: #eee;
-            --link-color: #66b3ff;
-        }
-
         body {
-            font-family: Arial;
-            background: var(--bg-color);
-            color: var(--text-color);
-            transition: 0.3s;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
         }
 
         .container {
-            width: 500px;
+            max-width: 600px;
             margin: 50px auto;
-            background: var(--container-bg);
-            padding: 20px;
+            background: white;
+            padding: 25px;
             border-radius: 5px;
+            border: 1px solid #ddd;
         }
 
-        .row {
-            margin-bottom: 12px;
-            font-size: 18px;
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
         }
 
-        .btn {
-            padding: 8px 15px;
-            color: white;
-            text-decoration: none;
-            background: green;
+        .info-box {
+            background: #fafafa;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 3px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
             display: inline-block;
-            margin-top: 10px;
-            border-radius: 4px;
+            width: 120px;
+            color: #555;
+        }
+
+        .info-value {
+            display: inline-block;
+            color: #333;
         }
 
         .status-active {
-            color: #28a745;
+            color: #4caf50;
             font-weight: bold;
         }
 
         .status-inactive {
-            color: #dc3545;
+            color: #f44336;
             font-weight: bold;
         }
 
-        a {
-            color: var(--link-color);
+        .type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        .theme-btn {
-            background: #007bff;
+        .type-physical {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .type-digital {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background: #4caf50;
             color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            float: right;
-            border-radius: 4px;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
         }
 
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
+        .btn-back:hover {
+            background: #45a049;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div class="clearfix">
-            <button type="button" class="theme-btn" onclick="toggleTheme()">🌙 / ☀️</button>
-        </div>
-
         <h2>Product Details</h2>
 
-        <div class="row">
-            <strong>ID:</strong> {{ $product->id }}
-        </div>
-
-        <div class="row">
-            <strong>Name:</strong> {{ $product->name }}
-        </div>
-
-        <div class="row">
-            <strong>Price:</strong> {{ $product->price }}
-        </div>
-
-        <div class="row">
-            <strong>Type:</strong> {{ $product->type ?? class_basename($product) }}
-        </div>
-
-        @if($product->type == 'physical')
-            <div class="row">
-                <strong>Weight:</strong> {{ $product->weight }} kg
+        <div class="info-box">
+            <div class="info-row">
+                <span class="info-label">ID:</span>
+                <span class="info-value">{{ $product->id }}</span>
             </div>
-            <div class="row">
-                <strong>Shipping Cost:</strong> ₹{{ $product->shipping_cost }}
-            </div>
-        @elseif($product->type == 'digital')
-            <div class="row">
-                <strong>Download Link:</strong> 
-                <a href="{{ $product->download_link }}" target="_blank">{{ $product->download_link }}</a>
-            </div>
-            <div class="row">
-                <strong>File Size:</strong> {{ $product->file_size }} MB
-            </div>
-        @endif
 
-        <div class="row">
-            <strong>Status:</strong>
-            <span class="{{ $product->status == 'active' ? 'status-active' : 'status-inactive' }}">
-                {{ ucfirst($product->status) }}
-            </span>
+            <div class="info-row">
+                <span class="info-label">Name:</span>
+                <span class="info-value">{{ $product->name }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Price:</span>
+                <span class="info-value">${{ number_format($product->price, 2) }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Type:</span>
+                <span class="info-value">
+                    <span class="type-badge {{ $product->type == 'physical' ? 'type-physical' : 'type-digital' }}">
+                        {{ $product->type == 'physical' ? 'Physical Product' : 'Digital Product' }}
+                    </span>
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Status:</span>
+                <span class="info-value {{ $product->status == 'active' ? 'status-active' : 'status-inactive' }}">
+                    {{ ucfirst($product->status) }}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Created:</span>
+                <span class="info-value">{{ $product->created_at->format('Y-m-d H:i:s') }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Last Updated:</span>
+                <span class="info-value">{{ $product->updated_at->format('Y-m-d H:i:s') }}</span>
+            </div>
         </div>
 
-        <br>
-
-        <a href="{{ route('products.index') }}" class="btn">Back</a>
+        <a href="{{ route('products.index') }}" class="btn-back">Back to List</a>
     </div>
-
-    <script>
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-        }
-    </script>
-
 </body>
 </html>
